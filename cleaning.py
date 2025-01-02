@@ -1,15 +1,14 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
 def clean_data(df):
 
     # Remove rows where 'time', 'location', or 'crime_type' is "Unknown"
     df = df[(df['time'] != 'Unknown') & (df['location'] != 'Unknown') & (df['crime_type'] != 'Unknown')]
 
-    # Encode 'crime_type' as labels (for prediction)
-    label_encoder = LabelEncoder()
-    df['crime_type_encoded'] = label_encoder.fit_transform(df['crime_type'])
+   
+    # One-hot encoding for 'crime_category'
+    df = pd.get_dummies(df, columns=['crime_category'], drop_first=True)
 
     # Frequency Encoding for 'location' column
     df['location_frequency'] = df['location'].map(df['location'].value_counts())

@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from scraper import scrape_pdf_links
 from extractor import extract_crime_data
-from utils import download_pdf
+from utils import download_pdf, categorize_crime
 from cleaning import clean_data  # Import the data cleaning function
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -30,13 +30,14 @@ for pdf_link in pdf_links:
 
 # Convert the collected data into a DataFrame
 df = pd.DataFrame(all_crime_data)
-
+df.to_csv("ucsd_crime_raw.csv", index=False)
+df['crime_category'] = df['crime_type'].apply(categorize_crime)
 # Save the DataFrame to a CSV file
-df.to_csv("ucsd_crime_data.csv", index=False)
+df.to_csv("updated_ucsd_crime.csv", index=False)
 
-print("Crime data saved to ucsd_crime_data.csv")
+print("Crime data saved to ucsd_crimecsv")
 
 print("Cleaning the data...")
 df_cleaned = clean_data(df)
-df_cleaned = df_cleaned.drop(['crime_type', 'location'], axis=1)
+df_cleaned = df_cleaned.drop(['crime_type', 'crime_category', 'location'], axis=1)
 df_cleaned.to_csv("ucsd_crime_data_encoded.csv", index=False)
